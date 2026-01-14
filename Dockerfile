@@ -31,4 +31,5 @@ USER nonroot
 
 WORKDIR /app
 
-CMD ["python", "src/__main__.py"]
+# CMD ["python", "src/__main__.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "src.__main__:create_app()"]
