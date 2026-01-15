@@ -1,5 +1,38 @@
+from dishka import make_container
+from dishka.integrations.flask import FlaskProvider, setup_dishka
 from flask import Flask
+
+from src.config import Config
+from src.infrastructure.repositories.user_repository import (
+    SqlAlchemyUserRepository,
+)
+from src.ioc import AppProvider
+from src.presentation.views.init_bp import init_bp
+from src.request_handlers import inject_user, load_current_user
 
 
 def create_app() -> Flask:
-    return Flask(__name__)
+    config = Config()  # type: ignore  # noqa: PGH003
+
+    app = Flask(
+        __name__,
+        static_folder="./presentation/static",
+        template_folder="./presentation/templates",
+    )
+    app.config["SECRET_KEY"] = config.APP.SECRET_KEY
+    app.config["PERMANENT_SESSION_LIFETIME"] = (
+        config.APP.PERMANENT_SESSION_LIFETIME
+    )
+
+    init_bp(app=app)
+
+    container = make_container(
+        AppProvider(), FlaskProvider(), context={Config: config}
+    )
+    setup_dishka(container=container, app=app, auto_inject=True)
+
+    user_repo = container.get(dependency_type=SqlAlchemyUserRepository)
+    app.before_request(lambda: load_current_user(user_repo=user_repo))
+    app.context_processor(inject_user)
+
+    return app

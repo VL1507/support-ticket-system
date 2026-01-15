@@ -1,0 +1,105 @@
+{% extends "base.html" %} {% block title %}Главная — Техподдержка{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center mt-5 pt-4">
+  <div class="col-lg-10 col-xl-8 text-center">
+    <h1 class="display-4 fw-bold mb-4">
+      <i class="bi bi-headset display-3 me-3 text-primary"></i>
+      Система технической поддержки
+    </h1>
+
+    <p class="lead text-muted mb-5 fs-4">
+      Быстрое решение ваших вопросов через удобные тикеты.<br />
+      Создавайте обращения, общайтесь с администраторами в реальном времени,
+      получайте уведомления о статусе.
+    </p>
+
+    {% if current_user %}
+    <!-- Пользователь уже авторизован -->
+    <div class="card border-primary shadow-lg mb-5">
+      <div class="card-body p-5">
+        <h3 class="card-title mb-4">
+          Добро пожаловать, {{ current_user.name }}!
+        </h3>
+        <p class="card-text lead mb-4">
+          Вы уже в системе. Теперь можно создавать и отслеживать свои обращения.
+        </p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+          <a
+            href="{{ url_for('tickets.my_tickets') }}"
+            class="btn btn-primary btn-lg px-5"
+          >
+            <i class="bi bi-ticket-perforated-fill me-2"></i>
+            Мои тикеты
+          </a>
+          {% if current_user.role.is_admin %}
+          <a
+            href="{{ url_for('tickets.all_tickets') }}"
+            class="btn btn-outline-primary btn-lg px-5"
+          >
+            <i class="bi bi-list-check me-2"></i>
+            Все обращения
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- Пользователь не авторизован -->
+    <div class="card shadow-lg border-0 bg-white mb-5">
+      <div class="card-body p-5">
+        <h3 class="mb-4">Начните прямо сейчас</h3>
+        <p class="text-muted mb-4 fs-5">
+          Для создания обращений и общения с поддержкой необходимо войти в
+          систему.
+        </p>
+
+        <div class="d-grid gap-4 d-md-flex justify-content-md-center mt-5">
+          <a
+            href="{{ url_for('auth.login') }}"
+            class="btn btn-primary btn-lg px-5 py-3"
+          >
+            <i class="bi bi-box-arrow-in-right me-2"></i>
+            Войти в аккаунт
+          </a>
+          <a
+            href="{{ url_for('auth.register') }}"
+            class="btn btn-outline-primary btn-lg px-5 py-3"
+          >
+            <i class="bi bi-person-plus-fill me-2"></i>
+            Зарегистрироваться
+          </a>
+        </div>
+
+        <hr class="my-5" />
+
+        <div class="row text-center">
+          <div class="col-md-4 mb-4">
+            <i
+              class="bi bi-journal-text display-4 text-primary mb-3 d-block"
+            ></i>
+            <h5>Создавайте тикеты</h5>
+            <small class="text-muted"
+              >Опишите проблему один раз — и следите за решением</small
+            >
+          </div>
+          <div class="col-md-4 mb-4">
+            <i class="bi bi-chat-dots display-4 text-primary mb-3 d-block"></i>
+            <h5>Общайтесь в чате</h5>
+            <small class="text-muted">Переписка внутри каждого обращения</small>
+          </div>
+          <div class="col-md-4 mb-4">
+            <i
+              class="bi bi-check2-circle display-4 text-primary mb-3 d-block"
+            ></i>
+            <h5>Получайте статусы</h5>
+            <small class="text-muted">В работе / Решено / Закрыто</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

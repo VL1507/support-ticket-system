@@ -2,9 +2,10 @@
 CREATE TABLE IF NOT EXISTS "User" (
 	"id" serial NOT NULL UNIQUE,
 	"name" varchar(255) NOT NULL,
-	"login" varchar(255) NOT NULL,
+	"login" varchar(255) NOT NULL UNIQUE,
 	"hash_password" varchar(255) NOT NULL,
 	"role_id" int NOT NULL,
+	"is_active" boolean NOT NULL DEFAULT true,
 	PRIMARY KEY("id")
 );
 
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "Ticket" (
 	"ticket_category_id" int NOT NULL,
 	"created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
 	"updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-	"resolution_text" varchar(255),
+	"resolution_text" text,
 	"closed_at" TIMESTAMPTZ,
 	PRIMARY KEY("id")
 );
