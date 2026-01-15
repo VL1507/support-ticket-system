@@ -3,8 +3,6 @@ class DomainError(Exception):
 
 
 class LoginAlreadyExistsError(DomainError):
-    """Исключение, возникающее при попытке создания пользователя с существующим логином"""
-
     def __init__(self, login: str | None = None) -> None:
         message = (
             f"Login '{login}' already exists"

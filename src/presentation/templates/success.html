@@ -6,34 +6,36 @@ block content %}
       <h1 class="display-4 mb-4">Добро пожаловать, {{ current_user.name }}!</h1>
 
       <p class="lead mb-5">Вы успешно вошли в систему технической поддержки.</p>
-
+      
       {% if current_user.role.is_admin %}
       <div class="alert alert-info mb-4">
         <i class="bi bi-shield-lock-fill me-2"></i>
         У вас есть права администратора
+      </div>
+      <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+        <a
+          href="{{ url_for('admin_tickets.tickets') }}"
+          class="btn btn-primary btn-lg px-5"
+        >
+          <i class="bi bi-ticket-perforated-fill me-2"></i>
+          Все обращения
+        </a>
       </div>
       {% else %}
       <div class="alert alert-success mb-4">
         <i class="bi bi-person-check-fill me-2"></i>
         Вы зарегистрированы как обычный пользователь
       </div>
-      {% endif %}
-
       <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
         <a
-          href="{{ url_for('tickets.my_tickets') }}"
+          href="{{ url_for('user_tickets.tickets') }}"
           class="btn btn-primary btn-lg px-5"
         >
           <i class="bi bi-ticket-perforated-fill me-2"></i>
           Мои обращения
         </a>
-        <!-- <a
-          href="{{ url_for('auth.logout') }}"
-          class="btn btn-outline-secondary btn-lg px-5"
-        >
-          Выйти
-        </a> -->
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

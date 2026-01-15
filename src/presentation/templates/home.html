@@ -25,20 +25,21 @@
           Вы уже в системе. Теперь можно создавать и отслеживать свои обращения.
         </p>
         <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-          <a
-            href="{{ url_for('tickets.my_tickets') }}"
-            class="btn btn-primary btn-lg px-5"
-          >
-            <i class="bi bi-ticket-perforated-fill me-2"></i>
-            Мои тикеты
-          </a>
           {% if current_user.role.is_admin %}
           <a
-            href="{{ url_for('tickets.all_tickets') }}"
+            href="{{ url_for('admin_tickets.tickets') }}"
             class="btn btn-outline-primary btn-lg px-5"
           >
             <i class="bi bi-list-check me-2"></i>
             Все обращения
+          </a>
+          {% else %}
+          <a
+            href="{{ url_for('user_tickets.tickets') }}"
+            class="btn btn-primary btn-lg px-5"
+          >
+            <i class="bi bi-ticket-perforated-fill me-2"></i>
+            Мои тикеты
           </a>
           {% endif %}
         </div>
