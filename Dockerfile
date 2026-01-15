@@ -1,14 +1,9 @@
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
 
-ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
-ENV UV_NO_DEV=1
-ENV UV_PYTHON_DOWNLOADS=0
-
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     pkg-config \
-#     default-libmysqlclient-dev \
-#     build-essential \
-#     && rm -rf /var/lib/apt/lists/*
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_NO_DEV=1 \
+    UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /app
 
@@ -35,5 +30,4 @@ USER nonroot
 
 WORKDIR /app
 
-# CMD ["python", "src/__main__.py"]
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "src.__main__:create_app()"]
