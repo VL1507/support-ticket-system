@@ -1,12 +1,15 @@
 from dishka import make_container
 from dishka.integrations.flask import FlaskProvider, setup_dishka
 from flask import Flask
+from sqlalchemy.orm import scoped_session
 
 from src.config import Config
+from src.infrastructure.database.accessor import new_session_maker
 from src.infrastructure.repositories.user_repository import (
     SqlAlchemyUserRepository,
 )
 from src.ioc import AppProvider
+from src.presentation.admin import init_admin
 from src.presentation.views.init_bp import init_bp
 from src.request_handlers import inject_user, load_current_user
 
@@ -30,6 +33,9 @@ def create_app() -> Flask:
         AppProvider(), FlaskProvider(), context={Config: config}
     )
     setup_dishka(container=container, app=app, auto_inject=True)
+
+    db_session = scoped_session(new_session_maker(config.DB))
+    admin = init_admin(app, db_session)
 
     user_repo = container.get(dependency_type=SqlAlchemyUserRepository)
     app.before_request(lambda: load_current_user(user_repo=user_repo))
