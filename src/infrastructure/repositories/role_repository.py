@@ -15,11 +15,11 @@ class SqlAlchemyRoleRepository(RoleRepository):
         model = self.session.scalar(statement=stmt)
         if not model:
             return None
-        return Role(id=model.id, name=model.name)
+        return Role(model.name)
 
     def get_by_name(self, name: str) -> Role | None:
         stmt = select(models.Role).where(models.Role.name == name)
         model = self.session.scalar(statement=stmt)
         if not model:
             return None
-        return Role(id=model.id, name=model.name)
+        return Role(model.name)

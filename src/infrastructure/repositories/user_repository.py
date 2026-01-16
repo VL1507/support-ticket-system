@@ -21,7 +21,7 @@ class SqlAlchemyUserRepository(UserRepository):
             name=model.name,
             login=model.login,
             hash_password=model.hash_password,
-            role=Role(id=model.role.id, name=model.role.name),
+            role=Role(model.role.name),
         )
 
     def get_by_login(self, login: str) -> User | None:
@@ -34,16 +34,21 @@ class SqlAlchemyUserRepository(UserRepository):
             name=model.name,
             login=model.login,
             hash_password=model.hash_password,
-            role=Role(id=model.role.id, name=model.role.name),
+            role=Role(model.role.name),
             is_active=model.is_active,
         )
 
     def save(self, user: User) -> None:
+        role = self.session.scalar(
+            select(models.Role).where(models.Role.name == user.role)
+        )
+        if role is None:
+            raise Exception("Not role in db")
         model = models.User(
             name=user.name,
             login=user.login,
             hash_password=user.hash_password,
-            role_id=user.role.id,
+            role_id=role.id,
             is_active=user.is_active,
         )
         self.session.add(model)

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from src.domain.entities.user import User
 
 
-def login_required(f: Callable[..., Any]) -> Callable[..., Any]:
+def user_required(f: Callable[..., Any]) -> Callable[..., Any]:
     """
     Декоратор: требует, чтобы пользователь был авторизован.
     Если нет — перенаправляет на страницу логина.
@@ -22,6 +22,13 @@ def login_required(f: Callable[..., Any]) -> Callable[..., Any]:
         if user is None:
             flash("Для доступа необходимо войти в систему", "warning")
             return redirect(url_for("auth.login"))
+
+        if not user.role.is_user:
+            flash(
+                "Доступ запрещён: нужны права авторизованного пользователя",
+                "danger",
+            )
+            return redirect(url_for("auth.success"))
 
         return f(*args, **kwargs)
 
@@ -43,6 +50,30 @@ def admin_required(f: Callable[..., Any]) -> Callable[..., Any]:
 
         if not user.role.is_admin:
             flash("Доступ запрещён: нужны права администратора", "danger")
+            return redirect(url_for("auth.success"))
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def support_required(f: Callable[..., Any]) -> Callable[..., Any]:
+    """
+    Декоратор: требует, чтобы пользователь был авторизован И имел роль специалиста поддержки.
+    """
+
+    @wraps(f)
+    def decorated_function(*args: Any, **kwargs: Any) -> Any:
+        user: User | None = cast("User | None", g.get("user"))
+
+        if user is None:
+            flash("Войдите в систему", "warning")
+            return redirect(url_for("auth.login"))
+
+        if not user.role.is_support:
+            flash(
+                "Доступ запрещён: нужны права специалиста поддержки", "danger"
+            )
             return redirect(url_for("auth.success"))
 
         return f(*args, **kwargs)

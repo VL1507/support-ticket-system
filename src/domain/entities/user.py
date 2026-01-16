@@ -11,7 +11,7 @@ class User:
     name: str = ""
     login: str = ""
     hash_password: str = ""
-    role: Role = None
+    role: Role = Role.USER
     is_active: bool = True
 
     @classmethod
