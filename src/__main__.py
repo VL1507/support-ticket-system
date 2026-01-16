@@ -8,7 +8,7 @@ from src.infrastructure.database.accessor import new_session_maker
 from src.infrastructure.repositories.user_repository import (
     SqlAlchemyUserRepository,
 )
-from src.ioc import AppProvider
+from src.ioc import AuthProvider, DBProvider
 from src.presentation.admin import init_admin
 from src.presentation.views.init_bp import init_bp
 from src.request_handlers import inject_user, load_current_user
@@ -30,7 +30,7 @@ def create_app() -> Flask:
     init_bp(app=app)
 
     container = make_container(
-        AppProvider(), FlaskProvider(), context={Config: config}
+        DBProvider(), AuthProvider(), FlaskProvider(), context={Config: config}
     )
     setup_dishka(container=container, app=app, auto_inject=True)
 

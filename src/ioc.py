@@ -1,9 +1,8 @@
 from collections.abc import Iterable
 
-from dishka import AnyOf, Provider, Scope, provide
+from dishka import Provider, Scope, provide
 from sqlalchemy.orm import Session, sessionmaker
 
-from src.application.interfaces.database import DBSession
 from src.config import Config
 from src.domain.repositories.role_repository import RoleRepository
 from src.domain.repositories.user_repository import UserRepository
@@ -17,7 +16,16 @@ from src.infrastructure.repositories.user_repository import (
 )
 
 
-class AppProvider(Provider):
+class AuthProvider(Provider):
+    @provide(scope=Scope.APP)
+    def get_user_repository_for_auth(
+        self, config: Config
+    ) -> SqlAlchemyUserRepository:
+        with new_session_maker(db_config=config.DB)() as session:
+            return SqlAlchemyUserRepository(session=session)
+
+
+class DBProvider(Provider):
     @provide(scope=Scope.APP)
     def get_session_maker(self, config: Config) -> sessionmaker[Session]:
         return new_session_maker(db_config=config.DB)
@@ -25,21 +33,9 @@ class AppProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_session(
         self, session_maker: sessionmaker[Session]
-    ) -> Iterable[
-        AnyOf[
-            Session,
-            DBSession,
-        ]
-    ]:
+    ) -> Iterable[Session]:
         with session_maker() as session:
             yield session
-
-    @provide(scope=Scope.APP)
-    def get_user_repository_for_auth(
-        self, config: Config
-    ) -> SqlAlchemyUserRepository:
-        with new_session_maker(db_config=config.DB)() as session:
-            return SqlAlchemyUserRepository(session=session)
 
     @provide(scope=Scope.REQUEST)
     def get_user_repository(self, session: Session) -> UserRepository:
