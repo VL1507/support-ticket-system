@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="h-100">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,12 +28,17 @@
       body {
         min-height: 100vh;
         background-color: #f8f9fa;
+        display: flex;
+        flex-direction: column;
       }
       .navbar-brand {
         font-weight: 600;
       }
       .alert-dismissible .btn-close {
         padding: 0.75rem 1.25rem;
+      }
+      main {
+        flex: 1 0 auto; /* ← это главный трюк — растягивает main */
       }
     </style>
 
@@ -91,7 +96,7 @@
       </div>
     </nav>
 
-    <main class="container mt-4 mb-5">
+    <main class="container mt-4 mb-5 flex-grow-1">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %}
       <div class="row justify-content-center">
