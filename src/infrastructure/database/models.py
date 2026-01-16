@@ -31,6 +31,9 @@ class Role(Base):
 
     User: Mapped[list["User"]] = relationship("User", back_populates="role")
 
+    def __repr__(self) -> str:
+        return self.name
+
 
 class TicketCategory(Base):
     __tablename__ = "TicketCategory"
@@ -42,6 +45,9 @@ class TicketCategory(Base):
     Ticket: Mapped[list["Ticket"]] = relationship(
         "Ticket", back_populates="ticket_category"
     )
+
+    def __repr__(self) -> str:
+        return self.name
 
 
 class TicketStatus(Base):
@@ -70,6 +76,9 @@ class TicketStatus(Base):
         foreign_keys="[TicketStatusHistory.to_status_id]",
         back_populates="to_status",
     )
+
+    def __repr__(self) -> str:
+        return self.name
 
 
 class User(Base):
