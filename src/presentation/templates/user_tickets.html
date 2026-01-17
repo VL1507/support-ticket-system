@@ -1,0 +1,99 @@
+{% extends "base.html" %} {% block title %}Мои обращения{% endblock %} {% block
+content %}
+
+<div class="row mb-4">
+  <div class="col-12 col-md-8">
+    <h2 class="mb-1">Мои обращения</h2>
+    <p class="text-muted">
+      Здесь находятся все ваши созданные заявки в техподдержку
+    </p>
+  </div>
+  <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0">
+    <a href="{{ url_for('user_tickets_create.create') }}" class="btn btn-primary btn-lg">
+      <i class="bi bi-plus-lg me-2"></i>Создать новый тикет
+    </a>
+  </div>
+</div>
+
+{% if tickets %}
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Тема</th>
+            <th scope="col">Категория</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Дата создания</th>
+            <th scope="col">Последнее обновление</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in tickets %}
+          <tr>
+            <td class="fw-medium text-muted">{{ ticket.id }}</td>
+            <td>
+              <a
+                href="{{ url_for('user_tickets_ticket.tiсket', ticket_id=ticket.id) }}"
+                class="text-decoration-none fw-medium"
+              >
+                {{ ticket.title | truncate(68) }}
+              </a>
+            </td>
+            <td>{{ ticket.ticket_category.name }}</td>
+            <td>
+              {% set status = ticket.ticket_status %} {% if status.is_closed %}
+              <span class="badge bg-secondary"> {{ status.name }} </span>
+              {% elif status.name.lower() in ['в работе', 'на исполнении',
+              'принято'] %}
+              <span class="badge bg-primary"> {{ status.name }} </span>
+              {% elif status.name.lower() in ['новый', 'ожидает ответа'] %}
+              <span class="badge bg-warning text-dark">
+                {{ status.name }}
+              </span>
+              {% else %}
+              <span class="badge bg-info"> {{ status.name }} </span>
+              {% endif %}
+            </td>
+            <td class="text-muted">
+              {{ ticket.created_at.strftime('%d.%m.%Y %H:%M') }}
+            </td>
+            <td class="text-muted">
+              {{ ticket.updated_at.strftime('%d.%m.%Y %H:%M') }}
+            </td>
+            <td>
+              <a
+                href="{{ url_for('user_tickets_ticket.ticket', ticket_id=ticket.id) }}"
+                class="btn btn-sm btn-outline-secondary"
+              >
+                <i class="bi bi-eye"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- {% if pagination %}
+<div class="mt-4">{{ pagination.links | safe }}</div>
+{% endif %}  -->
+{% else %}
+
+<div class="alert alert-info text-center py-5 my-5">
+  <i class="bi bi-inbox fs-1 d-block mb-3 text-muted"></i>
+  <h5 class="mb-2">У вас пока нет обращений</h5>
+  <p class="text-muted mb-4">
+    Создайте первое обращение — мы поможем вам как можно быстрее
+  </p>
+  <a href="{{ url_for('user_tickets_create.create') }}" class="btn btn-primary">
+    <i class="bi bi-plus-lg me-2"></i>Создать заявку
+  </a>
+</div>
+
+{% endif %} {% endblock %}

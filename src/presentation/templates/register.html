@@ -11,32 +11,32 @@ content %}
 
           <div class="mb-3">
             <label class="form-label">{{ form.name.label }}</label>
-            {{ form.name(class="form-control", placeholder="Ваше имя") }} {% for
-            error in form.name.errors %}
+            {{ form.name(class="form-control") }} {% for error in
+            form.name.errors %}
             <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
 
           <div class="mb-3">
             <label class="form-label">{{ form.login.label }}</label>
-            {{ form.login(class="form-control", placeholder="Логин") }} {% for
-            error in form.login.errors %}
+            {{ form.login(class="form-control") }} {% for error in
+            form.login.errors %}
             <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
 
           <div class="mb-3">
             <label class="form-label">{{ form.password.label }}</label>
-            {{ form.password(class="form-control", placeholder="Пароль") }} {%
-            for error in form.password.errors %}
+            {{ form.password(class="form-control") }} {% for error in
+            form.password.errors %}
             <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
 
           <div class="mb-4">
             <label class="form-label">{{ form.password2.label }}</label>
-            {{ form.password2(class="form-control", placeholder="Повторите
-            пароль") }} {% for error in form.password2.errors %}
+            {{ form.password2(class="form-control") }} {% for error in
+            form.password2.errors %}
             <div class="invalid-feedback d-block">{{ error }}</div>
             {% endfor %}
           </div>
