@@ -29,9 +29,9 @@ class CreateTicketForm(FlaskForm):
         validators=[
             DataRequired(message="Опишите проблему"),
             Length(
-                min=20,
+                min=1,
                 max=5000,
-                message="Описание должно быть от 20 до 5000 символов",
+                message="Описание должно быть от 1 до 5000 символов",
             ),
         ],
         render_kw={
@@ -39,7 +39,5 @@ class CreateTicketForm(FlaskForm):
             "placeholder": "Подробно опишите, что произошло, какие шаги привели к проблеме, что вы уже пробовали",
         },
     )
-
-    # priority = SelectField('Приоритет', choices=[...], coerce=int)  # опционально
 
     submit = SubmitField("Создать обращение")
