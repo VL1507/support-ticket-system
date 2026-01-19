@@ -56,6 +56,8 @@ def login(auth_service: FromDishka[AuthService]) -> str | Response:
             session.permanent = True
             session["user_id"] = user.id
             flash("Добро пожаловать!", "success")
+            if user.role.is_admin:
+                return redirect("/admin")
             return redirect(url_for("auth.success"))
         flash("Неверный логин или пароль", "danger")
     return render_template("login.html", form=form)
