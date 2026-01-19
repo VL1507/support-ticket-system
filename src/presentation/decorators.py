@@ -8,6 +8,26 @@ if TYPE_CHECKING:
     from src.domain.entities.user import User
 
 
+def is_login(f: Callable[..., Any]) -> Callable[..., Any]:
+    """
+    Декоратор: требует, чтобы пользователь был авторизован.
+    Если нет — перенаправляет на страницу логина.
+    """
+
+    @wraps(f)
+    def decorated_function(*args: Any, **kwargs: Any) -> Any:
+        # Приводим g.user к нужному типу (мы уверены, что он User | None)
+        user: User | None = cast("User | None", g.get("user"))
+
+        if user is None:
+            flash("Для доступа необходимо войти в систему", "warning")
+            return redirect(url_for("auth.login"))
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 def user_required(f: Callable[..., Any]) -> Callable[..., Any]:
     """
     Декоратор: требует, чтобы пользователь был авторизован.
