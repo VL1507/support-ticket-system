@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from src.domain.entities.user import User
 from src.domain.repositories.user_repository import IUserRepository
 from src.domain.value_objects.role import Role
+from src.infrastructure.exceptions import ThereIsNoRoleIdNameInTheDatabaseError
 from src.infrastructure.persistence import models
 
 
@@ -43,7 +44,7 @@ class SqlAlchemyUserRepository(IUserRepository):
             select(models.Role).where(models.Role.name == user.role)
         )
         if role is None:
-            raise Exception("Not role in db")
+            raise ThereIsNoRoleIdNameInTheDatabaseError(f"{user.role = }")
         model = models.User(
             name=user.name,
             login=user.login,
