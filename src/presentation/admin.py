@@ -6,7 +6,7 @@ from flask_admin.contrib.sqla import ModelView
 from sqlalchemy.orm import Session, scoped_session
 from werkzeug.wrappers.response import Response
 
-from src.infrastructure.database.models import (
+from src.infrastructure.persistence.models import (
     Message,
     Role,
     Ticket,

@@ -2,12 +2,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.domain.entities.user import User
-from src.domain.repositories.user_repository import UserRepository
+from src.domain.repositories.user_repository import IUserRepository
 from src.domain.value_objects.role import Role
-from src.infrastructure.database import models
+from src.infrastructure.persistence import models
 
 
-class SqlAlchemyUserRepository(UserRepository):
+class SqlAlchemyUserRepository(IUserRepository):
     def __init__(self, session: Session) -> None:
         self.session = session
 

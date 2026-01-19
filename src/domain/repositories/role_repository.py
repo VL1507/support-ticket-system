@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from src.domain.value_objects.role import Role
 
 
-class RoleRepository(ABC):
+class IRoleRepository(ABC):
     @abstractmethod
     def get_by_id(self, role_id: int) -> Role | None:
         pass

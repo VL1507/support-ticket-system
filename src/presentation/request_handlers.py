@@ -3,10 +3,10 @@ from typing import Any
 
 from flask import g, session
 
-from src.domain.repositories.user_repository import UserRepository
+from src.domain.repositories.user_repository import IUserRepository
 
 
-def load_current_user(user_repo: UserRepository) -> None:
+def load_current_user(user_repo: IUserRepository) -> None:
     g.user = None
     if "user_id" in session:
         user = user_repo.get_by_id(session["user_id"])

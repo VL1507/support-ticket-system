@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from src.domain.entities.user import User
 
 
-class UserRepository(ABC):
+class IUserRepository(ABC):
     @abstractmethod
     def get_by_id(self, user_id: int) -> User | None:
         pass

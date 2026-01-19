@@ -10,11 +10,12 @@ from flask import (
 )
 from werkzeug.wrappers.response import Response
 
+from src.application.use_cases.user.login_user import LoginUserUseCase
+from src.application.use_cases.user.register_user import RegisterUserUseCase
 from src.domain.exceptions import (
     LoginAlreadyExistsError,
     NoRoleWithThisNameInTheDatabaseError,
 )
-from src.domain.services.auth_service import AuthService
 from src.presentation.exceptions import NotAllFieldsAreFilledInError
 from src.presentation.forms.login_form import LoginForm
 from src.presentation.forms.register_form import RegisterForm
@@ -23,11 +24,13 @@ auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
-def register(auth_service: FromDishka[AuthService]) -> str | Response:
+def register(
+    register_user_use_case: FromDishka[RegisterUserUseCase],
+) -> str | Response:
     form = RegisterForm()
     if form.validate_on_submit():
         try:
-            user = auth_service.register(
+            user = register_user_use_case(
                 name=form.name.data,
                 login=form.login.data,
                 password=form.password.data,
@@ -46,12 +49,14 @@ def register(auth_service: FromDishka[AuthService]) -> str | Response:
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
-def login(auth_service: FromDishka[AuthService]) -> str | Response:
+def login(
+    login_user_use_case: FromDishka[LoginUserUseCase],
+) -> str | Response:
     if g.user:
         return redirect(url_for("auth.success"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = auth_service.login(form.login.data, form.password.data)
+        user = login_user_use_case(form.login.data, form.password.data)
         if user:
             session.permanent = True
             session["user_id"] = user.id

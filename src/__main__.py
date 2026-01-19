@@ -4,11 +4,15 @@ from flask import Flask
 from sqlalchemy.orm import scoped_session
 
 from src.config import Config
-from src.infrastructure.database.accessor import new_session_maker
-from src.infrastructure.repositories.user_repository import (
+from src.infrastructure.persistence.repositories.user_repository import (
     SqlAlchemyUserRepository,
 )
-from src.ioc import AuthProvider, DBProvider, SecurityProvider
+from src.infrastructure.persistence.session import new_session_maker
+from src.ioc import (
+    DBProvider,
+    SecurityProvider,
+    UserUseCasesProvider,
+)
 from src.presentation.admin import init_admin
 from src.presentation.request_handlers import inject_user, load_current_user
 from src.presentation.views.init_bp import init_bp
@@ -31,7 +35,7 @@ def create_app() -> Flask:
 
     container = make_container(
         DBProvider(),
-        AuthProvider(),
+        UserUseCasesProvider(),
         SecurityProvider(),
         FlaskProvider(),
         context={Config: config},
@@ -39,7 +43,7 @@ def create_app() -> Flask:
     setup_dishka(container=container, app=app, auto_inject=True)
 
     db_session = scoped_session(new_session_maker(config.DB))
-    admin = init_admin(app, db_session)
+    init_admin(app, db_session)
 
     user_repo = container.get(dependency_type=SqlAlchemyUserRepository)
     app.before_request(lambda: load_current_user(user_repo=user_repo))
