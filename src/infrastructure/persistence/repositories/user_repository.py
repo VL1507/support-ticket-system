@@ -1,9 +1,12 @@
+from uuid import UUID
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.domain.entities.user import User
 from src.domain.repositories.user_repository import IUserRepository
 from src.domain.value_objects.role import Role
+from src.domain.value_objects.user_id import UserID
 from src.infrastructure.exceptions import ThereIsNoRoleIdNameInTheDatabaseError
 from src.infrastructure.persistence import models
 
@@ -12,13 +15,13 @@ class SqlAlchemyUserRepository(IUserRepository):
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def get_by_id(self, user_id: int) -> User | None:
-        stmt = select(models.User).where(models.User.id == user_id)
+    def get_by_id(self, user_id: UserID) -> User | None:
+        stmt = select(models.User).where(models.User.id == user_id.value)
         model = self.session.scalar(statement=stmt)
         if not model:
             return None
         return User(
-            id=model.id,
+            id=UserID(value=model.id),
             name=model.name,
             login=model.login,
             hash_password=model.hash_password,
@@ -31,7 +34,7 @@ class SqlAlchemyUserRepository(IUserRepository):
         if not model:
             return None
         return User(
-            id=model.id,
+            id=UserID(value=model.id),
             name=model.name,
             login=model.login,
             hash_password=model.hash_password,
@@ -46,6 +49,7 @@ class SqlAlchemyUserRepository(IUserRepository):
         if role is None:
             raise ThereIsNoRoleIdNameInTheDatabaseError(f"{user.role = }")
         model = models.User(
+            id=user.id.value,
             name=user.name,
             login=user.login,
             hash_password=user.hash_password,
@@ -54,5 +58,3 @@ class SqlAlchemyUserRepository(IUserRepository):
         )
         self.session.add(model)
         self.session.commit()
-        self.session.refresh(model)
-        user.id = model.id

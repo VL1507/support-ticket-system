@@ -4,12 +4,13 @@ from typing import Any
 from flask import g, session
 
 from src.domain.repositories.user_repository import IUserRepository
+from src.domain.value_objects.user_id import UserID
 
 
 def load_current_user(user_repo: IUserRepository) -> None:
     g.user = None
     if "user_id" in session:
-        user = user_repo.get_by_id(session["user_id"])
+        user = user_repo.get_by_id(user_id=UserID(session["user_id"]))
         if user:
             g.user = user
         else:

@@ -45,7 +45,9 @@ def create_app() -> Flask:
     db_session = scoped_session(new_session_maker(config.DB))
     init_admin(app, db_session)
 
-    user_repo = container.get(dependency_type=SqlAlchemyUserRepository)
+    user_repo = SqlAlchemyUserRepository(
+        session=new_session_maker(config.DB)()
+    )
     app.before_request(lambda: load_current_user(user_repo=user_repo))
     app.context_processor(inject_user)
 

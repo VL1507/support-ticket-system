@@ -5,7 +5,8 @@ from src.domain.exceptions import (
 )
 from src.domain.repositories.role_repository import IRoleRepository
 from src.domain.repositories.user_repository import IUserRepository
-from src.domain.utils.password_hasher import PasswordHasher
+from src.domain.utils.password_hasher import IPasswordHasher
+from src.domain.value_objects.user_id import UserID
 
 
 class RegisterUserUseCase:
@@ -13,7 +14,7 @@ class RegisterUserUseCase:
         self,
         user_repo: IUserRepository,
         role_repo: IRoleRepository,
-        password_hasher: PasswordHasher,
+        password_hasher: IPasswordHasher,
     ) -> None:
         self.user_repo = user_repo
         self.role_repo = role_repo
@@ -28,8 +29,12 @@ class RegisterUserUseCase:
         hash_password = self.password_hasher.hash_password(
             plain_password=password
         )
-        user = User.create(
-            name=name, login=login, hash_password=hash_password, role=role
+        user = User(
+            id=UserID.new(),
+            name=name,
+            login=login,
+            hash_password=hash_password,
+            role=role,
         )
         self.user_repo.save(user)
         return user

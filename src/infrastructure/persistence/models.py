@@ -1,4 +1,5 @@
 import datetime
+import uuid
 
 from sqlalchemy import (
     Boolean,
@@ -10,6 +11,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    Uuid,
     text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -31,9 +33,6 @@ class Role(Base):
 
     User: Mapped[list["User"]] = relationship("User", back_populates="role")
 
-    def __repr__(self) -> str:
-        return self.name
-
 
 class TicketCategory(Base):
     __tablename__ = "TicketCategory"
@@ -45,9 +44,6 @@ class TicketCategory(Base):
     Ticket: Mapped[list["Ticket"]] = relationship(
         "Ticket", back_populates="ticket_category"
     )
-
-    def __repr__(self) -> str:
-        return self.name
 
 
 class TicketStatus(Base):
@@ -77,9 +73,6 @@ class TicketStatus(Base):
         back_populates="to_status",
     )
 
-    def __repr__(self) -> str:
-        return self.name
-
 
 class User(Base):
     __tablename__ = "User"
@@ -88,13 +81,12 @@ class User(Base):
             ["role_id"], ["Role.id"], name="User_role_id_fkey"
         ),
         PrimaryKeyConstraint("id", name="User_pkey"),
+        UniqueConstraint("login", name="User_login_key"),
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    login: Mapped[str] = mapped_column(
-        String(255), nullable=False, unique=True
-    )
+    login: Mapped[str] = mapped_column(String(255), nullable=False)
     hash_password: Mapped[str] = mapped_column(String(255), nullable=False)
     role_id: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(
@@ -135,9 +127,9 @@ class Ticket(Base):
         Index("Ticket_index_2", "updated_at"),
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     ticket_status_id: Mapped[int] = mapped_column(Integer, nullable=False)
     ticket_category_id: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(
@@ -181,12 +173,12 @@ class Message(Base):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    ticket_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    ticket_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     text_: Mapped[str] = mapped_column("text", Text, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
-    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
 
     ticket: Mapped["Ticket"] = relationship("Ticket", back_populates="Message")
     user: Mapped["User"] = relationship("User", back_populates="Message")
@@ -219,10 +211,10 @@ class TicketStatusHistory(Base):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    ticket_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    ticket_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     from_status_id: Mapped[int] = mapped_column(Integer, nullable=False)
     to_status_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    changed_by_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    changed_by_user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     changed_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )

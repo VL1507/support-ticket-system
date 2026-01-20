@@ -1,9 +1,10 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from typing import Protocol
 
 from src.domain.value_objects.role import Role
 
 
-class IRoleRepository(ABC):
+class IRoleRepository(Protocol):
     @abstractmethod
     def get_by_id(self, role_id: int) -> Role | None:
         pass

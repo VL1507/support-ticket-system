@@ -36,7 +36,7 @@ def register(
                 password=form.password.data,
             )
             session.permanent = True
-            session["user_id"] = user.id
+            session["user_id"] = user.id.value
             flash("Регистрация успешна!", "success")
             return redirect(url_for("auth.success"))
         except LoginAlreadyExistsError as e:
@@ -59,7 +59,7 @@ def login(
         user = login_user_use_case(form.login.data, form.password.data)
         if user:
             session.permanent = True
-            session["user_id"] = user.id
+            session["user_id"] = user.id.value
             flash("Добро пожаловать!", "success")
             if user.role.is_admin:
                 return redirect("/admin")
