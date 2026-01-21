@@ -32,6 +32,5 @@ class Argon2PasswordHasher(IPasswordHasher):
             VerifyMismatchError,
             InvalidHashError,
             VerificationError,
-            Exception,
         ):
             return False
