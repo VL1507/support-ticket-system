@@ -16,8 +16,8 @@ from src.infrastructure.persistence.repositories.user_repository import (
     SqlAlchemyUserRepository,
 )
 from src.infrastructure.persistence.session import new_session_maker
-from src.infrastructure.security.bcrypt_password_hasher import (
-    BcryptPasswordHasher,
+from src.infrastructure.security.argon2_password_hasher import (
+    Argon2PasswordHasher,
 )
 
 
@@ -51,7 +51,7 @@ class SecurityProvider(Provider):
     def get_password_hasher(
         self,
     ) -> IPasswordHasher:
-        return BcryptPasswordHasher()
+        return Argon2PasswordHasher()
 
 
 class DBProvider(Provider):
