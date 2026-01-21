@@ -7,13 +7,13 @@ from sqlalchemy.orm import Session, scoped_session
 from werkzeug.wrappers.response import Response
 
 from src.infrastructure.persistence.models import (
-    Message,
-    Role,
-    Ticket,
-    TicketCategory,
-    TicketStatus,
-    TicketStatusHistory,
-    User,
+    MessageORM,
+    RoleORM,
+    TicketCategoryORM,
+    TicketORM,
+    TicketStatusHistoryORM,
+    TicketStatusORM,
+    UserORM,
 )
 
 if TYPE_CHECKING:
@@ -68,28 +68,30 @@ def init_admin(app: Flask, db_session: scoped_session[Session]) -> Admin:
     )
 
     admin.add_view(
-        AdminRequiredModelView(User, db_session, name="Пользователи")
+        AdminRequiredModelView(UserORM, db_session, name="Пользователи")
     )
-    admin.add_view(AdminRequiredModelView(Role, db_session, name="Роли"))
+    admin.add_view(AdminRequiredModelView(RoleORM, db_session, name="Роли"))
     admin.add_view(
-        AdminRequiredModelView(Message, db_session, name="Сообщения")
+        AdminRequiredModelView(MessageORM, db_session, name="Сообщения")
     )
     admin.add_view(
-        AdminRequiredModelView(Ticket, db_session, name="Обращения")
+        AdminRequiredModelView(TicketORM, db_session, name="Обращения")
     )
     admin.add_view(
         AdminRequiredModelView(
-            TicketCategory, db_session, name="Категории обращений"
+            TicketCategoryORM, db_session, name="Категории обращений"
         )
     )
     admin.add_view(
         AdminRequiredModelView(
-            TicketStatus, db_session, name="Статусы обращений"
+            TicketStatusORM, db_session, name="Статусы обращений"
         )
     )
     admin.add_view(
         AdminRequiredModelView(
-            TicketStatusHistory, db_session, name="История статусов обращений"
+            TicketStatusHistoryORM,
+            db_session,
+            name="История статусов обращений",
         )
     )
 

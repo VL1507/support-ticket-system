@@ -21,7 +21,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class Role(Base):
+class RoleORM(Base):
     __tablename__ = "Role"
     __table_args__ = (
         PrimaryKeyConstraint("id", name="Role_pkey"),
@@ -31,22 +31,24 @@ class Role(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    User: Mapped[list["User"]] = relationship("User", back_populates="role")
+    User: Mapped[list["UserORM"]] = relationship(
+        "UserORM", back_populates="role"
+    )
 
 
-class TicketCategory(Base):
+class TicketCategoryORM(Base):
     __tablename__ = "TicketCategory"
     __table_args__ = (PrimaryKeyConstraint("id", name="TicketCategory_pkey"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    Ticket: Mapped[list["Ticket"]] = relationship(
-        "Ticket", back_populates="ticket_category"
+    Ticket: Mapped[list["TicketORM"]] = relationship(
+        "TicketORM", back_populates="ticket_category"
     )
 
 
-class TicketStatus(Base):
+class TicketStatusORM(Base):
     __tablename__ = "TicketStatus"
     __table_args__ = (
         PrimaryKeyConstraint("id", name="TicketStatus_pkey"),
@@ -59,22 +61,24 @@ class TicketStatus(Base):
         Boolean, nullable=False, server_default=text("false")
     )
 
-    Ticket: Mapped[list["Ticket"]] = relationship(
-        "Ticket", back_populates="ticket_status"
+    Ticket: Mapped[list["TicketORM"]] = relationship(
+        "TicketORM", back_populates="ticket_status"
     )
-    TicketStatusHistory: Mapped[list["TicketStatusHistory"]] = relationship(
-        "TicketStatusHistory",
-        foreign_keys="[TicketStatusHistory.from_status_id]",
+    TicketStatusHistory: Mapped[list["TicketStatusHistoryORM"]] = relationship(
+        "TicketStatusHistoryORM",
+        foreign_keys="[TicketStatusHistoryORM.from_status_id]",
         back_populates="from_status",
     )
-    TicketStatusHistory_: Mapped[list["TicketStatusHistory"]] = relationship(
-        "TicketStatusHistory",
-        foreign_keys="[TicketStatusHistory.to_status_id]",
-        back_populates="to_status",
+    TicketStatusHistory_: Mapped[list["TicketStatusHistoryORM"]] = (
+        relationship(
+            "TicketStatusHistoryORM",
+            foreign_keys="[TicketStatusHistoryORM.to_status_id]",
+            back_populates="to_status",
+        )
     )
 
 
-class User(Base):
+class UserORM(Base):
     __tablename__ = "User"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -93,19 +97,19 @@ class User(Base):
         Boolean, nullable=False, server_default=text("true")
     )
 
-    role: Mapped["Role"] = relationship("Role", back_populates="User")
-    Ticket: Mapped[list["Ticket"]] = relationship(
-        "Ticket", back_populates="user"
+    role: Mapped["RoleORM"] = relationship("RoleORM", back_populates="User")
+    Ticket: Mapped[list["TicketORM"]] = relationship(
+        "TicketORM", back_populates="user"
     )
-    Message: Mapped[list["Message"]] = relationship(
-        "Message", back_populates="user"
+    Message: Mapped[list["MessageORM"]] = relationship(
+        "MessageORM", back_populates="user"
     )
-    TicketStatusHistory: Mapped[list["TicketStatusHistory"]] = relationship(
-        "TicketStatusHistory", back_populates="changed_by_user"
+    TicketStatusHistory: Mapped[list["TicketStatusHistoryORM"]] = relationship(
+        "TicketStatusHistoryORM", back_populates="changed_by_user"
     )
 
 
-class Ticket(Base):
+class TicketORM(Base):
     __tablename__ = "Ticket"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -143,22 +147,22 @@ class Ticket(Base):
         DateTime(timezone=True)
     )
 
-    ticket_category: Mapped["TicketCategory"] = relationship(
-        "TicketCategory", back_populates="Ticket"
+    ticket_category: Mapped["TicketCategoryORM"] = relationship(
+        "TicketCategoryORM", back_populates="Ticket"
     )
-    ticket_status: Mapped["TicketStatus"] = relationship(
-        "TicketStatus", back_populates="Ticket"
+    ticket_status: Mapped["TicketStatusORM"] = relationship(
+        "TicketStatusORM", back_populates="Ticket"
     )
-    user: Mapped["User"] = relationship("User", back_populates="Ticket")
-    Message: Mapped[list["Message"]] = relationship(
-        "Message", back_populates="ticket"
+    user: Mapped["UserORM"] = relationship("UserORM", back_populates="Ticket")
+    Message: Mapped[list["MessageORM"]] = relationship(
+        "MessageORM", back_populates="ticket"
     )
-    TicketStatusHistory: Mapped[list["TicketStatusHistory"]] = relationship(
-        "TicketStatusHistory", back_populates="ticket"
+    TicketStatusHistory: Mapped[list["TicketStatusHistoryORM"]] = relationship(
+        "TicketStatusHistoryORM", back_populates="ticket"
     )
 
 
-class Message(Base):
+class MessageORM(Base):
     __tablename__ = "Message"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -180,11 +184,13 @@ class Message(Base):
     )
     user_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
 
-    ticket: Mapped["Ticket"] = relationship("Ticket", back_populates="Message")
-    user: Mapped["User"] = relationship("User", back_populates="Message")
+    ticket: Mapped["TicketORM"] = relationship(
+        "TicketORM", back_populates="Message"
+    )
+    user: Mapped["UserORM"] = relationship("UserORM", back_populates="Message")
 
 
-class TicketStatusHistory(Base):
+class TicketStatusHistoryORM(Base):
     __tablename__ = "TicketStatusHistory"
     __table_args__ = (
         ForeignKeyConstraint(
@@ -220,19 +226,19 @@ class TicketStatusHistory(Base):
     )
     comment: Mapped[str | None] = mapped_column(Text)
 
-    changed_by_user: Mapped["User"] = relationship(
-        "User", back_populates="TicketStatusHistory"
+    changed_by_user: Mapped["UserORM"] = relationship(
+        "UserORM", back_populates="TicketStatusHistory"
     )
-    from_status: Mapped["TicketStatus"] = relationship(
-        "TicketStatus",
+    from_status: Mapped["TicketStatusORM"] = relationship(
+        "TicketStatusORM",
         foreign_keys=[from_status_id],
         back_populates="TicketStatusHistory",
     )
-    ticket: Mapped["Ticket"] = relationship(
-        "Ticket", back_populates="TicketStatusHistory"
+    ticket: Mapped["TicketORM"] = relationship(
+        "TicketORM", back_populates="TicketStatusHistory"
     )
-    to_status: Mapped["TicketStatus"] = relationship(
-        "TicketStatus",
+    to_status: Mapped["TicketStatusORM"] = relationship(
+        "TicketStatusORM",
         foreign_keys=[to_status_id],
         back_populates="TicketStatusHistory_",
     )
