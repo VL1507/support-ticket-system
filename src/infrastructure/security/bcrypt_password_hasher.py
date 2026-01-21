@@ -1,7 +1,9 @@
 import bcrypt
 
+from src.domain.utils.password_hasher import IPasswordHasher
 
-class BcryptPasswordHasher:
+
+class BcryptPasswordHasher(IPasswordHasher):
     def hash_password(self, plain_password: str) -> str:
         return bcrypt.hashpw(
             password=plain_password.encode("utf-8"), salt=bcrypt.gensalt()
