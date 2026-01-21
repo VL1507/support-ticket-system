@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "bcrypt>=5.0.0",
+    "argon2-cffi>=25.1.0",
     "dishka>=1.7.2",
     "flask>=3.1.2",
     "flask-admin>=2.0.2",
