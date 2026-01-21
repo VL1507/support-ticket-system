@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from flask import Blueprint
 
 from src.presentation.decorators import user_required
@@ -7,7 +9,7 @@ bp = Blueprint(
 )
 
 
-@bp.route("/ticket/<int:ticket_id>")
+@bp.route("/ticket/<uuid:ticket_id>")
 @user_required
-def ticket(ticket_id: int) -> str:
+def ticket(ticket_id: UUID) -> str:
     return f"ticket {ticket_id}"
