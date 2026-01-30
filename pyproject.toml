@@ -32,6 +32,7 @@ strict_bytes = true
 local_partial_types = true
 warn_unreachable = true
 explicit_package_bases = true
+plugins = ['pydantic.mypy']
 
 [tool.ruff]
 line-length = 79
