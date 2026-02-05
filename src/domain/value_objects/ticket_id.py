@@ -5,7 +5,7 @@ from uuid import UUID, uuid4
 
 @final
 @dataclass(frozen=True, slots=True, eq=True)
-class UserID:
+class TicketID:
     value: UUID
 
     @classmethod

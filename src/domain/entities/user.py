@@ -4,7 +4,7 @@ from src.domain.value_objects.role import Role
 from src.domain.value_objects.user_id import UserID
 
 
-@dataclass
+@dataclass(slots=True)
 class User:
     id: UserID
     name: str

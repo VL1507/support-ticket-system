@@ -4,10 +4,18 @@ from dishka import Provider, Scope, provide
 from sqlalchemy.orm import Session, sessionmaker
 
 from src.config import Config
+from src.domain.repositories.message_repository import IMessageRepository
 from src.domain.repositories.role_repository import IRoleRepository
+from src.domain.repositories.ticket_repository import ITicketRepository
 from src.domain.repositories.user_repository import IUserRepository
+from src.infrastructure.persistence.repositories.message_repository import (
+    SqlAlchemyMessageRepository,
+)
 from src.infrastructure.persistence.repositories.role_repository import (
     SqlAlchemyRoleRepository,
+)
+from src.infrastructure.persistence.repositories.ticket_repository import (
+    SqlAlchemyTicketRepository,
 )
 from src.infrastructure.persistence.repositories.user_repository import (
     SqlAlchemyUserRepository,
@@ -34,3 +42,11 @@ class DBProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_role_repository(self, session: Session) -> IRoleRepository:
         return SqlAlchemyRoleRepository(session=session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_message_repository(self, session: Session) -> IMessageRepository:
+        return SqlAlchemyMessageRepository(session=session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_ticket_repository(self, session: Session) -> ITicketRepository:
+        return SqlAlchemyTicketRepository(session=session)

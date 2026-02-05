@@ -13,7 +13,7 @@ from src.presentation.views.init_bp import init_bp
 
 
 def create_app() -> Flask:
-    config = Config()  # type: ignore  # noqa: PGH003
+    config = Config()
 
     app = Flask(
         __name__,
